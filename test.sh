@@ -42,6 +42,7 @@ output = sitk.GetArrayFromImage(sitk.ReadImage(os.path.join('/output/images/auto
 expected_file = os.listdir('/expected_output/images')[0]
 expected_output = sitk.GetArrayFromImage(sitk.ReadImage(os.path.join('/expected_output/images/',expected_file)))
 mse = sum(sum(sum((output - expected_output) ** 2)))
+print(mse)
 if mse == 0.0:
     print('Test passed!')
 else:
