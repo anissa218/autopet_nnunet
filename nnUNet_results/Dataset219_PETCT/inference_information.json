@@ -1,0 +1,34 @@
+{
+    "all_results": {
+        "nnUNetTrainer_1500epochs_1e2lr__nnUNetPlans__3d_fullres_maxnum_512_patch_192": 0.4856840627032086
+    },
+    "best_model_or_ensemble": {
+        "postprocessing_file": "/well/papiez/users/hri611/python/nnUNet_results/Dataset219_PETCT/nnUNetTrainer_1500epochs_1e2lr__nnUNetPlans__3d_fullres_maxnum_512_patch_192/crossval_results_folds_0_1_2_3_4/postprocessing.pkl",
+        "result_on_crossval_post_pp": 0.4856840627032086,
+        "result_on_crossval_pre_pp": 0.4856840627032086,
+        "selected_model_or_models": [
+            {
+                "configuration": "3d_fullres_maxnum_512_patch_192",
+                "plans_identifier": "nnUNetPlans",
+                "trainer": "nnUNetTrainer_1500epochs_1e2lr"
+            }
+        ],
+        "some_plans_file": "/well/papiez/users/hri611/python/nnUNet_results/Dataset219_PETCT/nnUNetTrainer_1500epochs_1e2lr__nnUNetPlans__3d_fullres_maxnum_512_patch_192/crossval_results_folds_0_1_2_3_4/plans.json"
+    },
+    "considered_models": [
+        {
+            "configuration": "3d_fullres_maxnum_512_patch_192",
+            "plans": "nnUNetPlans",
+            "trainer": "nnUNetTrainer_1500epochs_1e2lr"
+        }
+    ],
+    "dataset_name_or_id": "Dataset219_PETCT",
+    "ensembling_allowed": true,
+    "folds": [
+        0,
+        1,
+        2,
+        3,
+        4
+    ]
+}

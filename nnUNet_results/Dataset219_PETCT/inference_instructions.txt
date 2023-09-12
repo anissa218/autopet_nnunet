@@ -1,0 +1,7 @@
+***Run inference like this:***
+
+nnUNetv2_predict -d Dataset219_PETCT -i INPUT_FOLDER -o OUTPUT_FOLDER -f  0 1 2 3 4 -tr nnUNetTrainer_1500epochs_1e2lr -c 3d_fullres_maxnum_512_patch_192 -p nnUNetPlans
+
+***Once inference is completed, run postprocessing like this:***
+
+nnUNetv2_apply_postprocessing -i OUTPUT_FOLDER -o OUTPUT_FOLDER_PP -pp_pkl_file /well/papiez/users/hri611/python/nnUNet_results/Dataset219_PETCT/nnUNetTrainer_1500epochs_1e2lr__nnUNetPlans__3d_fullres_maxnum_512_patch_192/crossval_results_folds_0_1_2_3_4/postprocessing.pkl -np 8 -plans_json /well/papiez/users/hri611/python/nnUNet_results/Dataset219_PETCT/nnUNetTrainer_1500epochs_1e2lr__nnUNetPlans__3d_fullres_maxnum_512_patch_192/crossval_results_folds_0_1_2_3_4/plans.json
