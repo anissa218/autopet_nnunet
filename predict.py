@@ -7,17 +7,81 @@ from nnunet.inference.segmentation_export import save_segmentation_nifti_from_so
 from batchgenerators.utilities.file_and_folder_operations import *
 #from multiprocessing import Process, Queue
 from queue import Queue
+import cc3d
+from copy import deepcopy
+from multiprocessing.pool import Pool
+import nibabel as nib
+import matplotlib.pyplot as plt
+import SimpleITK as sitk
+import torch
+import shutil
+import os
+
+from nnunet.configuration import default_num_threads
+from nnunet.evaluation.evaluator import aggregate_scores
+from scipy.ndimage import label
+from nnunet.utilities.sitk_stuff import copy_geometry
+from batchgenerators.utilities.file_and_folder_operations import *
+import shutil
+
 
 # from multiprocessing.dummy import Queue
-import torch
-import SimpleITK as sitk
-import shutil
 
 from nnunet.postprocessing.connected_components import load_remove_save, load_postprocessing
 from nnunet.training.model_restore import load_model_and_checkpoint_files
 from nnunet.training.network_training.nnUNetTrainer import nnUNetTrainer
 from nnunet.utilities.one_hot_encoding import to_one_hot
 
+# anissa extra functions:
+
+def con_comp(seg_array):
+    # input: a binary segmentation array output: an array with seperated (indexed) connected components of the segmentation array
+    connectivity = 18
+    conn_comp = cc3d.connected_components(seg_array, connectivity=connectivity)
+    return conn_comp
+
+def process_array(arr,min_size):
+    '''
+    arr: numpy image array
+    min-size: threshold of connected component size
+    returns: processed numpy array
+    '''
+    min_size = int(min_size)
+
+    pred_conn_comp = con_comp(arr) # do connected comopnent analysis fo array
+    unique_elements, counts = np.unique(pred_conn_comp, return_counts=True)
+    # Create a mapping to change values less than 10 to 0
+    change_to_zero = unique_elements[counts < min_size]
+
+    processed_arr = pred_conn_comp.copy()
+
+    # Change values less than 10 to 0
+    for val in change_to_zero:
+        processed_arr[processed_arr == val] = 0
+    
+    # put all non-0 values back to 1 (all tumour)
+    processed_arr[processed_arr != 0] = 1
+
+    return processed_arr, change_to_zero,min_size
+
+def copy_geometry(image: sitk.Image, ref: sitk.Image):
+    image.SetOrigin(ref.GetOrigin())
+    image.SetDirection(ref.GetDirection())
+    image.SetSpacing(ref.GetSpacing())
+    return image
+
+def anissa_postprocess(input_file: str, output_file: str):
+    # Only objects larger than minimum_valid_object_size will be removed. Keys in minimum_valid_object_size must
+    # match entries in for_which_classes
+    img_in = sitk.ReadImage(input_file)
+    img_npy = sitk.GetArrayFromImage(img_in)
+
+    image,change_to_zero,min_size = process_array(img_npy,10) # should return numpy array
+
+    img_out_itk = sitk.GetImageFromArray(image)
+    img_out_itk = copy_geometry(img_out_itk, img_in)
+    sitk.WriteImage(img_out_itk, output_file)
+    return change_to_zero, min_size # not sure if these are necessary (originally largest_removed and kept_size), put random outputs
 
 def check_input_folder_and_return_caseIDs(input_folder, expected_num_modalities):
     print("This model expects %d input modalities for each image" % expected_num_modalities)
@@ -256,23 +320,14 @@ def predict_cases(model, list_of_lists, output_filenames, folds, save_npz, num_t
     # _ = [i.get() for i in results]
     # now apply postprocessing
     # first load the postprocessing properties if they are present. Else raise a well visible warning
+
     if not disable_postprocessing:
+
         results = []
-        pp_file = join(model, "postprocessing.json")
-        if isfile(pp_file):
-            print("postprocessing...")
-            shutil.copy(pp_file, os.path.abspath(os.path.dirname(output_filenames[0])))
-            # for_which_classes stores for which of the classes everything but the largest connected component needs to be
-            # removed
-            for_which_classes, min_valid_obj_size = load_postprocessing(pp_file)
-            results.append(load_remove_save(zip(output_filenames, output_filenames,
-                                                  [for_which_classes] * len(output_filenames),
-                                                  [min_valid_obj_size] * len(output_filenames))))
-            # _ = [i.get() for i in results]
-        else:
-            print("WARNING! Cannot run postprocessing because the postprocessing file is missing. Make sure to run "
-                  "consolidate_folds in the output folder of the model first!\nThe folder you need to run this in is "
-                  "%s" % model)
+        print("postprocessing...")
+        results.append(anissa_postprocess(output_filenames,output_filenames)) # this should be input but double check - should it be a list??
+    else:
+        print("not post processing")
 
 def preprocess_multithreaded(trainer, list_of_lists, output_files, num_processes=1, segs_from_prev_stage=None):
     if segs_from_prev_stage is None:
