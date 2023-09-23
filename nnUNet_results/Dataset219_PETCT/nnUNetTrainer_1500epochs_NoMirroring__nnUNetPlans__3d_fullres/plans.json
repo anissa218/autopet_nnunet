@@ -1,6 +1,6 @@
 {
     "dataset_name": "Dataset219_PETCT",
-    "plans_name": "nnUNetPlans",
+     "plans_name": "nnUNetPlans",
     "original_median_spacing_after_transp": [
         3.0,
         2.0364201068878174,
@@ -159,19 +159,19 @@
             "preprocessor_name": "DefaultPreprocessor",
             "batch_size": 2,
             "patch_size": [
-                128,
-                128,
+                112,
+                160,
                 128
             ],
             "median_image_size_in_voxels": [
-                175,
-                215,
-                215
+                176,
+                221,
+                221
             ],
             "spacing": [
-                5.58088371512849,
-                3.7883412705634814,
-                3.7883412705634814
+                5.418333704008242,
+                3.678001233556778,
+                3.678001233556778
             ],
             "normalization_schemes": [
                 "CTNormalization",
@@ -199,7 +199,7 @@
                 2
             ],
             "num_pool_per_axis": [
-                5,
+                4,
                 5,
                 5
             ],
@@ -230,7 +230,7 @@
                     2
                 ],
                 [
-                    2,
+                    1,
                     2,
                     2
                 ]
@@ -297,12 +297,12 @@
             "preprocessor_name": "DefaultPreprocessor",
             "batch_size": 2,
             "patch_size": [
-                128,
-                128,
+                112,
+                160,
                 128
             ],
             "median_image_size_in_voxels": [
-                326.0,
+                318.0,
                 400.0,
                 400.0
             ],
@@ -337,7 +337,7 @@
                 2
             ],
             "num_pool_per_axis": [
-                5,
+                4,
                 5,
                 5
             ],
@@ -368,7 +368,7 @@
                     2
                 ],
                 [
-                    2,
+                    1,
                     2,
                     2
                 ]
@@ -432,15 +432,6 @@
         "3d_cascade_fullres": {
             "inherits_from": "3d_fullres",
             "previous_stage": "3d_lowres"
-        },
-        "3d_fullres_maxnum_512_patch_192": {
-            "inherits_from": "3d_fullres",
-            "unet_max_num_features": 512,
-            "patch_size": [
-                192,
-                192,
-                192
-            ]
         }
     },
     "experiment_planner_used": "ExperimentPlanner",
@@ -448,21 +439,21 @@
     "foreground_intensity_properties_per_channel": {
         "0": {
             "max": 3603.951904296875,
-            "mean": -5.004732184495556,
-            "median": 52.096736907958984,
-            "min": -1464.62890625,
-            "percentile_00_5": -872.845458984375,
-            "percentile_99_5": 601.3734130859375,
-            "std": 233.0145880928197
+            "mean": 10.566891421100175,
+            "median": 44.54430389404297,
+            "min": -1357.7672119140625,
+            "percentile_00_5": -839.866943359375,
+            "percentile_99_5": 502.99847412109375,
+            "std": 188.31940698642236
         },
         "1": {
             "max": 347.4015197753906,
-            "mean": 5.720663519201248,
-            "median": 4.119294166564941,
-            "min": 0.09483639150857925,
-            "percentile_00_5": 1.0719033479690552,
-            "percentile_99_5": 31.369548797606967,
-            "std": 5.137147835295145
+            "mean": 6.037966591481317,
+            "median": 4.614960193634033,
+            "min": -0.3487227261066437,
+            "percentile_00_5": 0.9480704665184021,
+            "percentile_99_5": 29.070600509643555,
+            "std": 4.877652308703571
         }
     }
 }
